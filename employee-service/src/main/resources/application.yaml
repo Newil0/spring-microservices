@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: employee-service
+  config:
+    import: "configserver:http://localhost:8080"
+  cloud:
+    config:
+      name: ${spring.application.name}, common
