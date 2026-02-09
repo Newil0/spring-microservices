@@ -1,0 +1,12 @@
+app:
+  wikimedia:
+    stream-url: https://stream.wikimedia.org/v2/stream/recentchange
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      kafka-producer:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        registerHealthIndicator: true
