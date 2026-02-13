@@ -1,0 +1,29 @@
+spring:
+    application:
+        name: wikimedia-stream-service
+    kafka:
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        bootstrap-servers: localhost:9092
+        properties:
+          max.block.ms: 10000
+        delivery.timeout.ms: 3000
+        acks: 1
+
+server:
+  port: 8081
+
+app:
+  wikimedia:
+    stream-url: https://stream.wikimedia.org/v2/stream/recentchange
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      kafka-producer:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        registerHealthIndicator: true
+
