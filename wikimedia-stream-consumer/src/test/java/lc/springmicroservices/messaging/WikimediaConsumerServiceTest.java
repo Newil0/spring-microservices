@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @EmbeddedKafka(
         partitions = 1,
@@ -48,6 +48,8 @@ class WikimediaConsumerServiceTest {
         System.out.println("Data in repository: " + data.get(0));
         assert data.size() == 1;
         assert data.get(0).getEventData().equals(mockPayload);
+
+        Thread.sleep(500000);
 
     }
 }
