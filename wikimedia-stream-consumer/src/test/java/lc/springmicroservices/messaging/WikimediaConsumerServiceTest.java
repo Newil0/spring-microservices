@@ -14,11 +14,15 @@ import java.util.List;
 
 import static org.awaitility.Awaitility.await;
 
+/**
+ * For viewing H2 db during the test, put Thread.sleep() with however many seconds you want at the end of the test method
+ * (or wherever you want to pause the test),
+ * then connect to H2 console at http://localhost:8080/h2-console with config from the application.yml
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 @EmbeddedKafka(
         partitions = 1,
-        brokerProperties = { "listeners=PLAINTEXT://localhost:5432", "port=5432" },
         topics = {"wikimedia.recentchange"}
 )
 class WikimediaConsumerServiceTest {
@@ -31,25 +35,17 @@ class WikimediaConsumerServiceTest {
 
     @Test
     void testConsumeSavesToRepository() throws InterruptedException {
-        // 1. Arrange: Prepare the test data
         String mockPayload = "{\"event\": \"edit\", \"user\": \"test-user\"}";
 
-        // 2. Act: Send a message to the topic the listener is watching
         kafkaTemplate.send("wikimedia.recentchange", mockPayload);
 
-        // 3. Assert: Use Awaitility to wait for the async process to complete
-        // Since Kafka is async, standard verify() might fail if it checks too early.
         await()
             .atMost(Duration.ofSeconds(5))
             .pollInterval(Duration.ofMillis(500))
             .until(() -> repository.count() > 0);
 
         List<WikimediaData> data = repository.findAll();
-        System.out.println("Data in repository: " + data.get(0));
         assert data.size() == 1;
         assert data.get(0).getEventData().equals(mockPayload);
-
-        Thread.sleep(500000);
-
     }
 }

@@ -14,7 +14,7 @@ public class WikimediaConsumerService {
 
     private final WikimediaRepository repository;
 
-    @KafkaListener(topics = "wikimedia.recentchange", groupId = "my-group")
+    @KafkaListener(topics = "${app.kafka.topic.wikimedia}", groupId = "my-group")
     public void consume(String message) {
         try {
             log.info("Received message: {}", message);

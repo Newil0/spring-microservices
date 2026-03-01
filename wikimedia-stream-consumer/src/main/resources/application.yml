@@ -2,8 +2,6 @@ spring:
   application:
     name: wikimedia-stream-consumer
   kafka:
-    admin:
-      auto-create: false
     bootstrap-servers: localhost:9092
     consumer:
       group-id: wikimedia-group
@@ -17,3 +15,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+server:
+    port: 8082
+
+app:
+  kafka:
+    topic:
+      wikimedia: wikimedia.recentchange
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
